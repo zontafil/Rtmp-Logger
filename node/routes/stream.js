@@ -96,7 +96,7 @@ exports.onStart = function(req,res,next){
 					    	.success(function(serv_push_pull){
 
 					    		var client_status = ''
-					    		if (!serv_push_pull){
+					    		if ((!serv_push_pull) || (conf.disable_pushpull)){
 					    			if (req.query.call=='play') client_status = 'playing'
 					    			else client_status = 'publishing'
 					    		}
@@ -339,6 +339,7 @@ exports.onUpdate = function(req,res,next){
 
 												//add client's foreign keys and create the client on db
 												client_data.ClientId = client_data.id
+												client_data.status = 'playing'
 												delete client_data.id
 												client_data.StreamId = stream_item.id
 												chainer.add(db.Client.create(client_data)
