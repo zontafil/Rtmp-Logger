@@ -1,0 +1,16 @@
+{
+  "name": "node",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "xml2js": "~0.4.2",
+    "url-template": "~2.0.4",
+    "lodash": "~2.4.1",
+    "line-by-line": "~0.1.1",
+    "useragent": "~2.0.8"
+  },
+  "devDependencies": {}
+}
