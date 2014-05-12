@@ -9,53 +9,6 @@ var Sequelize = require('sequelize')
 , chainer = new Sequelize.Utils.QueryChainer
 
 
-var test_query_publish = { app: 'myapp',
-  flashver: 'FMLE/3.0 (compatible; Lavf55.19',
-  swfurl: '',
-  tcurl: 'rtmp://localhost:1935/myapp',
-  pageurl: 'teststream',
-  addr: '127.0.0.1',
-  clientid: '21',
-  call: 'publish',
-  name: 'mystream',
-  type: 'live' }
-
-var test_query_play = { app: 'myapp',
-  flashver: 'LNX 9,0,124,2',
-  swfurl: '',
-  tcurl: 'rtmp://localhost:1935/myapp',
-  pageurl: 'teststream',
-  addr: '127.0.0.1',
-  clientid: '9',
-  call: 'play',
-  name: 'mystream',
-  start: '4294965296',
-  duration: '0',
-  reset: '0' }
-
-var test_query_publish_done = { app: 'myapp',
-  flashver: 'FMLE/3.0 (compatible; Lavf55.19',
-  swfurl: '',
-  tcurl: 'rtmp://localhost:1935/myapp',
-  pageurl: 'teststream',
-  addr: '127.0.0.1',
-  clientid: '21',
-  call: 'publish_done',
-  name: 'mystream' }
-
-var test_query_play_done = { app: 'myapp',
-  flashver: 'LNX 9,0,124,2',
-  swfurl: '',
-  tcurl: 'rtmp://localhost:1935/myapp',
-  pageurl: 'teststream',
-  addr: '127.0.0.1',
-  clientid: '9',
-  call: 'play_done',
-  name: 'mystream' }
-
-
-
-
 //Create new stream, require person id and stream name
 exports.createNew = function(req,res,next){
 	//mandatory
@@ -75,7 +28,7 @@ exports.createNew = function(req,res,next){
 				        name: streamname
 				    })
 				    .success(function(new_stream_item){
-				    	//stream succesfully added: bind the publisher person
+				    	//STREAM SUCCESFULLY ADDED: BIND THE PUBLISHER PERSON
 				    	new_stream_item.setPerson(person_item)
 				    	.success(function(){res.send()})
 				    	.error(function(err){next(new Error(err))})
@@ -97,12 +50,6 @@ exports.onStart = function(req,res,next){
 	else if (!req.query.clientid) next(new Error('nginxclientid missing!'))
 	else{
 
-		//use test data if needed
-		if (conf.use_fake_data){
-			if (req.query.call=='play') req.query = test_query_play
-			if (req.query.call=='publish') req.query = test_query_publish
-		}
-
 		var remoteAddress = req.connection.remoteAddress
 
 		if (fs.existsSync('FAKE')) {
@@ -123,9 +70,10 @@ exports.onStart = function(req,res,next){
 				//get server id
 				var serverid = server_item.id
 
+				//check if the stream is registered
 				db.Stream.find({where:{name:streamname,ServerId:null}})
 				.success(function(stream_item){
-					if (!stream_item) next(new Error('Stream does not exist'))
+					if (!stream_item) next(new Error('Stream is not registered'))
 					else{
 
 						//ADD STREAM TO THE DB
@@ -143,24 +91,24 @@ exports.onStart = function(req,res,next){
 					    		.error(function(err){next(new Error(err))}))
 
 
-					    	//CHECK IF THE CLIENT PLAYING/PUBLISHING IS A SERVER (PULL/PUSH)
+					    	//CHECK IF THE CLIENT PLAYING/PUBLISHING IS A SERVER (->PULL/PUSH)
 					    	chainer.add(db.Server.find({where:{ip: req.query.addr}})
 					    	.success(function(serv_push_pull){
 
 					    		var client_status = ''
-					    		// if (!serv_push_pull){
+					    		if (!serv_push_pull){
 					    			if (req.query.call=='play') client_status = 'playing'
 					    			else client_status = 'publishing'
-					    		// }
-					    		// else{
-					    			// if (req.query.call=='play') client_status = 'pulling'
-					    			// else client_status = 'pushing'
-					    		// }
+					    		}
+					    		else{
+					    			if (req.query.call=='play') client_status = 'pulling'
+					    			else client_status = 'pushing'
+					    		}
+
 
 						    	//BUILD CLIENTID AND ADD CLIENT TO THE DB
-						    	var cid = getClientIDFromNginx(req.query.clientid,serverid)
-						    	chainer.add(db.Client.findOrCreate({id: cid})
-						    	.success(function(client_item,created){
+						    	chainer.add(db.Client.find({ClientId: req.query.clientid,StreamId:ss_item.id})
+						    	.success(function(client_item){
 						    		//compute flash version and OS
 						    		var flash='',os=''
 						    		if (client_status=='playing'){
@@ -180,19 +128,24 @@ exports.onStart = function(req,res,next){
 						    			os = flash = null
 						    		}
 
-						    		chainer.add(client_item.addStream(stream_item,{status: client_status})
-						    			.error(function(err){next(new Error(err))}))
-						    		chainer.add(client_item.updateAttributes({
+						    		var client_data = {
 					    				flash: flash,
 					    				os: os,
 					    				tcurl: req.query.pageurl,
-					    				swfurl: req.query.swfurl
-					    			})
-					    				.error(function(err){next(new Error(err))}))
-						    	})
-								.error(function(err){manage_error(res,'OnStart: '+err)}))
+					    				swfurl: req.query.swfurl,
+					    				status: client_status
+						    		}
 
-
+						    		if (!client_item){
+						    			client_data.ClientId = req.query.clientid
+						    			client_data.StreamId = ss_item.id
+						    			chainer.add(db.Client.create(client_data)
+						    				.error(function(err){next(new Error(err))}))
+						    		}
+						    		else{
+						    			chainer.add(client_item.updateAttributes(client_data)
+						    				.error(function(err){next(new Error(err))}))		
+						    		}
 
 						    	})
 						    	.error(function(err){next(new Error(err))}))
@@ -206,9 +159,13 @@ exports.onStart = function(req,res,next){
 
 
 							})
-							.error(function(err){next(new Error(err))})
+							.error(function(err){next(new Error(err))}))
+
+						})
+						.error(function(err){next(new Error(err))})
 
 					}
+
 				})
 				.error(function(err){next(new Error(err))})
 			}
@@ -224,11 +181,6 @@ exports.onDone = function(req,res,next){
 	if ((req.query.call!='publish_done') && (req.query.call!='play_done')) manage_error(res,'OnDone: Wrong action')
 	else if (!req.query.clientid) manage_error(res,'OnDone: nginxclientid missing!')
 	else{
-		//use test data if needed
-		if (conf.use_fake_data){
-			if (req.query.call=='play_done') req.query = test_query_play_done
-			if (req.query.call=='publish_done') req.query = test_query_publish_done
-		}
 
 		var remoteAddress = req.connection.remoteAddress
 
@@ -259,25 +211,23 @@ exports.onDone = function(req,res,next){
 							ServerId: serverid
 						})
 						.success(function(ss_item){
-							//build clientid
-					    	var cid = getClientIDFromNginx(req.query.clientid,serverid)
 
-					    	//UPDATE SERVER/STREAM STATUS
-					    	if (req.query.call=='publish_done') 
+					    	//UPDATE SERVER/STREAM STATUS IF THE PUBLISH IS DONE
+					    	if (req.query.call=='publish_done'){
 					    		chainer.add(ss_item.updateAttributes({status: 'idle'})
 					    			.error(function(err){next(new Error(err))}))
+						    	chainer.add(server_item.updateAttributes({status: 'inactive'})
+									.error(function(err){next(new Error(err))}))					    		
+						    }
 
-					    	chainer.add(server_item.updateAttributes({status: 'inactive'})
-								.error(function(err){next(new Error(err))}))					    		
 
-
-					    	chainer.add(db.Client.find({where: {id: cid}})
+						    //UPDATE CLIENT DATA
+					    	chainer.add(db.Client.find({where: {ClientId: req.query.clientid,StreamId:ss_item.id}})
 					    	.success(function(client_item){
 					    		if (!!client_item){ 
-					    			chainer.add(client_item.addStream(stream_item,{status:'idle'})
+					    			chainer.add(client_item.updateAttributes({status:'idle'})
 					    				.error(function(err){next(new Error(err))}))
 					    		}
-					    		else next(new Error('Cant create the client'))
 					    	})
 							.error(function(err){next(new Error(err))}))
 
@@ -365,6 +315,8 @@ exports.onUpdate = function(req,res,next){
 							}
 							
 						};
+
+						//stream/server item
 						var stream_item = streams_item[ss_index]
 
 
@@ -372,13 +324,11 @@ exports.onUpdate = function(req,res,next){
 						if (!!req.body.clients){
 
 							for (var i = 0; i < req.body.clients.length; i++) {
-								var client_data = req.body.clients[i] 
-								var clientid = getClientIDFromNginx(client_data.id,serverid)
-								client_data.id = clientid;
+								var client_data = req.body.clients[i];
 
 								//isolate every client and add it to the db if needed
 								(function(client_data){
-									chainer.add(db.Client.find({where: {id: clientid}})
+									chainer.add(db.Client.find({where: {ClientId: client_data.id,StreamId:stream_item.id}})
 									.success(function(client_item){
 
 										var timestamp = client_data.timestamp
@@ -386,10 +336,12 @@ exports.onUpdate = function(req,res,next){
 
 										if (!client_item){
 											if ((new Date()-timestamp)<conf.client_timeout){
+
+												//add client's foreign keys and create the client on db
+												client_data.ClientId = client_data.id
+												delete client_data.id
+												client_data.StreamId = stream_item.id
 												chainer.add(db.Client.create(client_data)
-												.success(function(client_item){
-													chainer.add(stream_item.addClient(client_item,{status: 'playing'}))
-												})
 												.error(function(err){next(new Error(err))}))
 											}
 											else if (conf.debug) console.log('Client log is too old')
@@ -398,9 +350,6 @@ exports.onUpdate = function(req,res,next){
 											//check if the log is in the past or not
 											if (((new Date()-timestamp)<conf.client_timeout) && (timestamp>client_item.updatedAt)){
 												chainer.add(client_item.updateAttributes(client_data)
-												.success(function(client_item){
-													chainer.add(stream_item.addClient(client_item,{status: 'playing'}))
-												})
 												.error(function(err){next(new Error(err))}))
 											}
 											else if (conf.debug) console.log('Client log is too old')
@@ -417,8 +366,10 @@ exports.onUpdate = function(req,res,next){
 						// CHECK FOR OLD CLIENTS TO DELETE (MAINLY FOR HLS SUPPORT)
 						for (var i = 0; i < stream_item.clients.length; i++) {
 							var client_item = stream_item.clients[i]
-							if ((new Date() - new Date(client_item.updatedAt))>conf.client_timeout)
-								chainer.add(client_item.destroy())
+							if ((new Date() - new Date(client_item.updatedAt))>conf.client_timeout){
+								chainer.add(client_item.updateAttributes({status:'idle'})
+									.error(function(err){next(new Error(err))}))
+							}
 						};
 
 						//WAIT FOR THE QUERY CHAIN TO END

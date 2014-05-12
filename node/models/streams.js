@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         Stream.belongsTo(models.Person)
         Stream.belongsTo(models.Server)
-        Stream.hasMany(models.Client, {through: models.ClientsStreams})
+        Stream.hasMany(models.Client)
       }
     }
   })
