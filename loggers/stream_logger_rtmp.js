@@ -7,7 +7,11 @@ var http = require('http')
 var app_list = ['myapp']
 var stream_list = ['teststream']
 
+//url of the streaming servers
 var logger_urls = ['http://localhost/stat']
+
+//include clients data, mainly for av/drop/duration infos
+var include_clients = true
 
 for (var l = 0; l < logger_urls.length; l++) {
     var logger_url = logger_urls[l]
@@ -23,6 +27,9 @@ for (var l = 0; l < logger_urls.length; l++) {
         //xml ---> js object
 
         xml2js.parseString(xml,function(err,item){
+
+
+          //ANALYZE STREAMS
           for (var i = 0; i < item.rtmp.server[0].application.length; i++) {
             var app = item.rtmp.server[0].application[i]
             var app_pos = app_list.indexOf(app.name[0])
@@ -35,7 +42,8 @@ for (var l = 0; l < logger_urls.length; l++) {
 
                 var stream_pos = stream_list.indexOf(stream.name[0])
                 if ((stream_pos!=-1) || (!stream_list.length)) {
-                  debugger
+
+                    //BUILD STREAM INFO
                     var params = {
                       vcodec : stream.meta[0].video[0].codec[0],
                       vbit : stream.bw_video[0],
@@ -58,9 +66,39 @@ for (var l = 0; l < logger_urls.length; l++) {
                       port: 3000 
                     }
 
+
+                    //INCLUDE CLIENTS DATA IF NEEDED
+                    if (include_clients){
+                      var clients = stream.client
+                      var clients_arr = []
+
+                      for (var c = 0; c < clients.length; c++) {
+                        var client = {}
+
+                        //populate client object
+                        client.av = clients[c].avsync[0]
+                        client.drop = clients[c].dropped[0]
+                        client.duration = clients[c].time[0]
+                        client.id = clients[c].id[0]
+                        client.flash = clients[c].flashver[0]
+                        client.timestamp = +(new Date())
+                        clients_arr.push(client)
+                      };
+
+                      var clientstring = JSON.stringify({clients:  clients_arr});
+
+                      params.headers={
+                        'Content-Type': 'application/json',
+                        'Content-Length': clientstring.length
+                      }
+
+                    }
+
+                    //SEND DATA TO THE LOGGER
                     params.path = template.parse(params.url).expand(params)
                     var request = http.request(params)
                     request.on('error', function(err){console.log("HTTP error: "+err)})
+                    if (include_clients) request.write(clientstring)
                     request.end()
 
                     stream_list.splice(stream_pos,1)
@@ -70,7 +108,6 @@ for (var l = 0; l < logger_urls.length; l++) {
               };
             }
           };
-
 
           //if the stream does not exist in the logs, push the idle state
           for (var i = 0; i < stream_list.length; i++) {
@@ -84,7 +121,7 @@ for (var l = 0; l < logger_urls.length; l++) {
           };
 
 
-        })
+        }) //end xml
       });
 
     });
