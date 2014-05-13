@@ -6,17 +6,18 @@ var Sequelize = require('sequelize')
 , chainer = new Sequelize.Utils.QueryChainer
 
 
-
+//stats for a single stream
 exports.streamStats = function(req,res,next){
 	//check if client owns the stream
-	db.Stream.find({where:{
-		name:req.params.streamname,
-		PersonId:req.params.personid
-	}})
-	.success(function(stream_item){
-		if (!stream_item) next(new Error('Stream or Client not found'))
+	var streamname = req.streams[0].name
+	db.Stream.findAll({
+		where:{ name: streamname },
+		include: [db.Client]
+	})
+	.success(function(streamservers_item){
+		if (!streamservers_item) next(new Error('Stream or Client not found'))
 		else{
-			stream.global_stats(req.params.streamname,function(err,global_stream){
+			stream.global_stats(streamservers_item,function(err,global_stream){
 				if (!!err) next(new Error('StreamStats: '+err))
 				else res.send([global_stream])
 			})
@@ -25,28 +26,35 @@ exports.streamStats = function(req,res,next){
 	.error(function(err){next(new Error(err))})
 }
 
+
+//stats for all streams
 exports.streamsStats = function(req,res,next){
-	db.Stream.findAll({where:{
-		PersonId:req.params.personid
-	}})
-	.success(function(streams_item){
 
-		var nstreams = streams_item.length
-		var completed_tasks = 0
-		var client_stats = {
-			PersonId: 0,
-			duration: 0,
-			avarageDuration: 0,
-			data: 0,
-			nclients: 0,
-			streams:[]
-		}
+	var streams_item = req.streams
 
-		if (nstreams==0) res.send([])
-		for (var i = 0; i < streams_item.length; i++) {
-			var name = streams_item[i].name
-			if (!!name){
-				 stream.global_stats(name,function(err,global_stream){
+	var nstreams = streams_item.length
+	var completed_tasks = 0
+	var client_stats = {
+		PersonId: 0,
+		duration: 0,
+		avarageDuration: 0,
+		data: 0,
+		nclients: 0,
+		streams:[]
+	}
+
+	if (nstreams==0) res.send([])
+	for (var i = 0; i < streams_item.length; i++) {
+		var name = streams_item[i].name
+		if (!!name){
+			db.Stream.findAll({
+				where:{ name: name },
+				include: [db.Client]
+			})
+			.success(function(streamservers_item){
+
+
+				stream.global_stats(streamservers_item,function(err,global_stream){
 					if (!!err) next(new Error(err))
 					else{
 						//build global stats of all streams
@@ -68,20 +76,24 @@ exports.streamsStats = function(req,res,next){
 						if (completed_tasks==nstreams) onTasksEnd()
 					}
 				})
-			}
-		};
 
 
+			})
+			.error(function(err){next(new Error(err))})
 
-		var onTasksEnd = function(){
-			//build additional stats
-			client_stats.avarageDuration = client_stats.duration /  nstreams
-
-			res.send([client_stats])
 		}
+	};
 
-	})
-	.error(function(err){next(new Error(err))})
+
+
+	var onTasksEnd = function(){
+		//build additional stats
+		client_stats.avarageDuration = client_stats.duration /  nstreams
+
+		res.send([client_stats])
+	}
+
+	
 }
 
 

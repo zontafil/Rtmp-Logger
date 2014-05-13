@@ -144,7 +144,7 @@ fs.readFile(timestamp_file,'utf8',function(err,data){
         };
 
         var params = {
-          path : logger_url+'?dataout='+streams[i].dataout+'&streamname='+streams[i].name+'&timestamp='+streams[i].timestamp,
+          path : logger_url+'?dataout='+streams[i].dataout+'&name='+streams[i].name+'&timestamp='+streams[i].timestamp,
           port: 3000,
           headers: headers
         }
