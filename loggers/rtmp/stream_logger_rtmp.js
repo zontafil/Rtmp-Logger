@@ -60,9 +60,9 @@ for (var l = 0; l < logger_urls.length; l++) {
                       bandout : stream.bw_out[0],
                       nclients : stream.nclients[0],
                       duration : stream.time[0],
-                      streamname : stream.name[0],
+                      name : stream.name[0],
 
-                      url : '/Stream/Update?vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&streamname={streamname}&duration={duration}',
+                      url : '/Stream/Update?vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
                       port: 3000 
                     }
 
@@ -112,7 +112,7 @@ for (var l = 0; l < logger_urls.length; l++) {
           //if the stream does not exist in the logs, push the idle state
           for (var i = 0; i < stream_list.length; i++) {
             var params = {
-              path: '/Stream/Update?idle=true&streamname='+stream_list[i],
+              path: '/Stream/Update?idle=true&name='+stream_list[i],
               port: 3000
             }
             var request = http.request(params)
@@ -121,7 +121,7 @@ for (var l = 0; l < logger_urls.length; l++) {
           };
 
 
-        }) //end xml
+         }) //end xml
       });
 
     });

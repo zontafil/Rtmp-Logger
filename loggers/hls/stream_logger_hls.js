@@ -3,7 +3,7 @@
 //AND
 //infos on single HLS clients connected
 
-//NB: nginx MUUST have the default access log format ('combined')
+//NB: nginx MUST have the default access log format ('combined')
 
 var http = require('http')
 , fs = require('fs')
@@ -144,7 +144,7 @@ fs.readFile(timestamp_file,'utf8',function(err,data){
         };
 
         var params = {
-          path : logger_url+'?dataout='+streams[i].dataout+'&streamname='+streams[i].name+'&timestamp='+streams[i].timestamp,
+          path : logger_url+'?dataout='+streams[i].dataout+'&name='+streams[i].name+'&timestamp='+streams[i].timestamp,
           port: 3000,
           headers: headers
         }

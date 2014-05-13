@@ -1,4 +1,5 @@
 loggers/node_modules/
+loggers/*/node_modules/
 node/node_modules/
 node/models_*
 node/routes_*
