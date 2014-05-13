@@ -3,7 +3,7 @@
 //AND
 //infos on single HLS clients connected
 
-//NB: nginx MUUST have the default access log format ('combined')
+//NB: nginx MUST have the default access log format ('combined')
 
 var http = require('http')
 , fs = require('fs')

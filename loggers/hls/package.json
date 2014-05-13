@@ -1,0 +1,14 @@
+{
+  "name": "node",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app"
+  },
+  "dependencies": {
+    "url-template": "~2.0.4",
+    "line-by-line": "~0.1.1",
+    "useragent": "~2.0.8"
+  },
+  "devDependencies": {}
+}

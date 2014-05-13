@@ -112,7 +112,7 @@ for (var l = 0; l < logger_urls.length; l++) {
           //if the stream does not exist in the logs, push the idle state
           for (var i = 0; i < stream_list.length; i++) {
             var params = {
-              path: '/Stream/Update?idle=true&streamname='+stream_list[i],
+              path: '/Stream/Update?idle=true&name='+stream_list[i],
               port: 3000
             }
             var request = http.request(params)
