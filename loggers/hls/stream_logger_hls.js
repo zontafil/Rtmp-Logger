@@ -12,7 +12,7 @@ var http = require('http')
 , Useragent = require('useragent')
 
 //list of streams to log / set to [] to fetch all
-var stream_list = ['teststream']
+var stream_list = []
 
 //logger url
 var logger_url = '/Stream/Update'

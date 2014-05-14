@@ -5,18 +5,19 @@ var http = require('http')
 
 //list of apps/streams to log / set to [] to fetch all
 var app_list = ['myapp']
-var stream_list = ['teststream']
+var stream_list = []
+var logger_url = '/Stream/Update'
 
 //url of the streaming servers
-var logger_urls = ['http://localhost/stat']
+var stream_servers = ['http://localhost/stat']
 
 //include clients data, mainly for av/drop/duration infos
 var include_clients = true
 
-for (var l = 0; l < logger_urls.length; l++) {
-    var logger_url = logger_urls[l]
+for (var l = 0; l < stream_servers.length; l++) {
+    var stream_server = stream_servers[l]
 
-    var req = http.get(logger_url, function(res) {
+    var req = http.get(stream_server, function(res) {
       // save the data
       var xml = '';
       res.on('data', function(chunk) {
@@ -112,7 +113,7 @@ for (var l = 0; l < logger_urls.length; l++) {
           //if the stream does not exist in the logs, push the idle state
           for (var i = 0; i < stream_list.length; i++) {
             var params = {
-              path: '/Stream/Update?idle=true&name='+stream_list[i],
+              path: logger_url+'?idle=true&name='+stream_list[i],
               port: 3000
             }
             var request = http.request(params)

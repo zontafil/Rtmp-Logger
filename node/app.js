@@ -32,7 +32,6 @@ app.configure('development', function(){
 
 
 //SERVER API -- PRIVATE
-app.post('/Person/:personid/Stream/:streamname',dataCheck.createNewStream(),stream.createNew) //register new stream
 app.get('/Stream/Start',dataCheck.EditStream('start'), stream.onStart) //start publish/play -- call with nginx on_*
 app.get('/Stream/Done',dataCheck.EditStream('done'),stream.onDone) //stop publish/play -- call with nginx on_*
 app.get('/Stream/Update',dataCheck.EditStream('update'),stream.onUpdate) //update stream -- call with stream_logger_rtmp or hls
@@ -40,6 +39,9 @@ app.get('/Stream/Update',dataCheck.EditStream('update'),stream.onUpdate) //updat
 
 
 //SERVER API -- PUBLIC
+
+//register new stream
+app.post('/Person/:personid/Stream/:streamname',dataCheck.createNewStream(),stream.createNew) //register new stream
 
 //stats for a particular stream
 app.get('/Person/:personid/Stream/:streamname/Stats',
