@@ -61,7 +61,7 @@ Clone the repo or a specific folder, as needed, i.e.:
 Install the dependencies on every folder with npm (make sure to have node installed first):
 
     $ cd node && npm install
-$ cd loggers/rtmp && npm install
+    $ cd loggers/rtmp && npm install
     $ cd loggers/hls && npm install
     
 Make sure to have PostgreSQL installed on the server
