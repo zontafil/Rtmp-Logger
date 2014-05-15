@@ -177,43 +177,40 @@ exports.onUpdate = function(req,res,next){
 	//CHECK IF THE CLIENTS DATA ARE EMBEDDED IN THE REQUEST
 	if (!!req.body.clients){
 
-		for (var i = 0; i < req.body.clients.length; i++) {
+		req.body.clients.forEach(function(client_data){
 			var client_data = req.body.clients[i];
 
-			//isolate every client and add it to the db if needed
-			(function(client_data){
-				chainer.add(db.Client.find({where: {ClientId: client_data.id,StreamId:req.streamserver.id}})
-				.success(function(client_item){
+			chainer.add(db.Client.find({where: {ClientId: client_data.id,StreamId:req.streamserver.id}})
+			.success(function(client_item){
 
-					var timestamp = client_data.timestamp
-					delete client_data.timestamp
+				var timestamp = client_data.timestamp
+				delete client_data.timestamp
 
-					if (!client_item){
-						if ((new Date()-timestamp)<conf.client_timeout){
+				if (!client_item){
+					if ((new Date()-timestamp)<conf.client_timeout){
 
-							//add client's foreign keys and create the client on db
-							client_data.ClientId = client_data.id
-							client_data.status = 'playing'
-							delete client_data.id
-							client_data.StreamId = req.streamserver.id
-							chainer.add(db.Client.create(client_data)
-							.error(function(err){next(new Error(err))}))
-						}
-						else if (conf.debug) console.log('Client log is too old')
+						//add client's foreign keys and create the client on db
+						client_data.ClientId = client_data.id
+						client_data.status = 'playing'
+						delete client_data.id
+						client_data.StreamId = req.streamserver.id
+						chainer.add(db.Client.create(client_data)
+						.error(function(err){next(new Error(err))}))
 					}
-					else{
-						//check if the log is in the past or not
-						if (((new Date()-timestamp)<conf.client_timeout) && (timestamp>client_item.updatedAt)){
-							chainer.add(client_item.updateAttributes(client_data)
-							.error(function(err){next(new Error(err))}))
-						}
-						else if (conf.debug) console.log('Client log is too old')
-
+					else if (conf.debug) console.log('Client log is too old')
+				}
+				else{
+					//check if the log is in the past or not
+					if (((new Date()-timestamp)<conf.client_timeout) && (timestamp>client_item.updatedAt)){
+						chainer.add(client_item.updateAttributes(client_data)
+						.error(function(err){next(new Error(err))}))
 					}
-				})
-				.error(function(err){next(new Error(err))}))
-			})(client_data)
-		}
+					else if (conf.debug) console.log('Client log is too old')
+
+				}
+			})
+			.error(function(err){next(new Error(err))}))
+		})
 
 	}
 
