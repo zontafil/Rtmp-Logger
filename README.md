@@ -5,9 +5,11 @@ The logs are stored in PostgreSQL through Sequelize.js
 
 ## Folders
 
-    ``node/``: the main logger server
-    ``loggers/hls/``: script that parses nginx access.log and send the logs to the main server
-    ``loggers/rtmp/``: script that parses the nginx-rtmp stats page and send the logs to the main server. This script can be put remotely, as long as the stat page for the specified server is accessible
+``node/``: the main logger server
+    
+``loggers/hls/``: script that parses nginx access.log and send the logs to the main server
+
+``loggers/rtmp/``: script that parses the nginx-rtmp stats page and send the logs to the main server. This script can be put remotely, as long as the stat page for the specified server is accessible
 
 ## API Schema
 
