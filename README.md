@@ -1,12 +1,14 @@
 # Overview
 ``rtmp-logger`` is a logger for streaming services hosted on nginx, written in Node.js.
-It supports rtmp and hls as long as multiple servers networks (push/pull).
+It supports rtmp and hls together with multiple servers networks (push/pull).
 The logs are stored in PostgreSQL through Sequelize.js
 
 ## Folders
 
 ``node/``: the main logger server
+    
 ``loggers/hls/``: script that parses nginx access.log and send the logs to the main server
+
 ``loggers/rtmp/``: script that parses the nginx-rtmp stats page and send the logs to the main server. This script can be put remotely, as long as the stat page for the specified server is accessible
 
 ## API Schema
@@ -61,7 +63,7 @@ Clone the repo or a specific folder, as needed, i.e.:
 Install the dependencies on every folder with npm (make sure to have node installed first):
 
     $ cd node && npm install
-$ cd loggers/rtmp && npm install
+    $ cd loggers/rtmp && npm install
     $ cd loggers/hls && npm install
     
 Make sure to have PostgreSQL installed on the server
