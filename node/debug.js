@@ -18,41 +18,37 @@ var exp = {
 
 module.exports = function(app){
 
-	if ((!!app) && (conf.debug.file)){
-		app.use(function(err,req,res,next){
+	if (!!app) app.use(function(err,req,res,next){
 
-			if (conf.debug.mode=='file'){
-				if (!err.stack) fs.appendFile(conf.debug.file,err+"\n")
-				if (!!err.stack) fs.appendFile(conf.debug.file,err.stack+"\n")
+		if (conf.debug.mode=='file'){
+			if (!err.stack) fs.appendFile(conf.debug.file,err+"\n")
+			else fs.appendFile(conf.debug.file,err.stack+"\n")
 
-				//print input data injected into request
-				if (!!req.person){
-					fs.appendFile(conf.debug.file,"Input Data: person\n")
-					fs.appendFile(conf.debug.file,JSON.stringify(req.person.dataValues))
-				}
-				if (!!req.server){
-					fs.appendFile(conf.debug.file,"Input Data: server\n")
-					fs.appendFile(conf.debug.file,JSON.stringify(req.server.dataValues))
-				}
-				if (!!req.stream){
-					fs.appendFile(conf.debug.file,"Input Data: stream\n")
-					fs.appendFile(conf.debug.file,JSON.stringify(req.stream.dataValues))
-				}
-				if (!!req.streamserver){
-					fs.appendFile(conf.debug.file,"Input Data: streamserver\n")
-					fs.appendFile(conf.debug.file,JSON.stringify(req.streamserver.dataValues))
-				}
+			//print input data injected into request
+			if (!!req.person){
+				fs.appendFile(conf.debug.file,"Input Data: person\n")
+				fs.appendFile(conf.debug.file,JSON.stringify(req.person.dataValues))
 			}
-			else if (conf.debug.mode=='console'){
-				if (!err.stack) console.log(conf.debug.file,err+"\n")
-				if (!!err.stack) console.log(conf.debug.file,err.stack+"\n")
+			if (!!req.server){
+				fs.appendFile(conf.debug.file,"Input Data: server\n")
+				fs.appendFile(conf.debug.file,JSON.stringify(req.server.dataValues))
 			}
+			if (!!req.stream){
+				fs.appendFile(conf.debug.file,"Input Data: stream\n")
+				fs.appendFile(conf.debug.file,JSON.stringify(req.stream.dataValues))
+			}
+			if (!!req.streamserver){
+				fs.appendFile(conf.debug.file,"Input Data: streamserver\n")
+				fs.appendFile(conf.debug.file,JSON.stringify(req.streamserver.dataValues))
+			}
+		}
+		else if (conf.debug.mode=='console'){
+			if (!err.stack) console.log(err+"\n")
+			else console.log(err.stack+"\n")
+		}
 
-			if (!!err.stack) res.send(500,err.stack)
-			else res.send(500,err)
-		})
-	}
+		if (!!err.stack) res.send(500,err.stack)
+		else res.send(500,err)
+	})
 	return exp
-
 }
-
