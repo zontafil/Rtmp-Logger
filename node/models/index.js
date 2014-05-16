@@ -2,7 +2,9 @@ var fs        = require('fs')
   , path      = require('path')
   , Sequelize = require('sequelize')
   , lodash    = require('lodash')
-  , sequelize = new Sequelize('test', 'testuser', 'test', {dialect:'postgres'})
+  , conf      = require('../conf.js')
+  , debug     = require('../debug.js')()
+  , sequelize = new Sequelize(conf.db.database, conf.db.user, conf.db.password, {dialect:'postgres', logging: debug.db_log})
   , db        = {}
  
 fs
