@@ -1,5 +1,5 @@
 var conf = {
-	force_db_sync: true,
+	force_db_sync: true,	//force rebuilding the DB, set to false in production!
 	disable_pushpull: false, //if true, the servers are seen as publisher/player rather than pusher/pullers
 	client_timeout: 600000, //timeout for not updated clients (in ms)
 	enableTestData: true,	//test data, see app.js
