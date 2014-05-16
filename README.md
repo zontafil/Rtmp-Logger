@@ -3,7 +3,7 @@
 It supports rtmp and hls together with multiple servers networks (push/pull).
 The logs are stored in PostgreSQL through Sequelize.js
 
-## Folders
+# Folders
 
 ``node/``: the main logger server
     
@@ -11,7 +11,7 @@ The logs are stored in PostgreSQL through Sequelize.js
 
 ``loggers/rtmp/``: script that parses the nginx-rtmp stats page and send the logs to the main server. This script can be put remotely, as long as the stat page for the specified server is accessible
 
-## API Schema
+# API Schema
 
 The logger server exposes ``private`` and ``public`` APIs.
 The response data is always in JSON format.
@@ -54,7 +54,7 @@ Should be called by logged users. Normal users are allowed to access only their 
     
 
 
-##Installation
+#Installation
 
 Clone the repo or a specific folder, as needed, i.e.:
 
@@ -68,7 +68,7 @@ Install the dependencies on every folder with npm (make sure to have node instal
     
 Make sure to have PostgreSQL installed on the server
 
-## Configuration
+# Configuration
 
 ### Main Server
 
@@ -103,7 +103,7 @@ Additionally, you should provide the url  of the main logger server.
 
 
 
-## Run
+# Run
 
 ### Run the logger server
 
@@ -132,7 +132,7 @@ Run the script in each streaming server.
     
 Make sure that the script can read the nginx access.log
 
-## Howto Stream
+# Howto Stream
 
 A good starting point is to enable ``enableTestData`` in ``conf.js`` of the server. Example data will be filled in the DB. They can be used as a reference.
 
@@ -153,7 +153,7 @@ Start streaming with rtmp (make sure to have nginx properly configured, see ``Co
 Play or pull/push the stream with rtmp or hls.
 
 
-## Advanced Topics: server code
+# Advanced Topics: server code
 
 The server uses the following libraries:
 
@@ -171,7 +171,7 @@ every module is implemented as express middleware.
 
 ### Authentication
 
-Authentication should be performed by ``passport.js``. At the moment, a dummy module (``FakeAuth``) is used instead, which just authentication without checking for passwords/tokens
+Authentication should be performed by ``passport.js``. At the moment, a dummy module (``FakeAuth``) is used instead, which just authenticates without checking for passwords/tokens
 
 ### Authorization
 
