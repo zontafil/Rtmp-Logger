@@ -72,11 +72,12 @@ Make sure to have PostgreSQL installed on the server
 
 ### Main Server
 
-Some configs are located in ``node/conf.js``. In particular, it is possible to choose a timeout for hls clients, so that they're set to idle state automatically if they have not communicated with the server for a while.
+Configs are located in ``node/conf.js``. In particular, it is possible to:
 
-#### DB configuration
-
-edit ``node/models/index.js`` to configure the connection parameters of the database.
+* Choose a timeout for hls clients, so that they're set to idle state automatically if they have not communicated with the server for a while.
+* Configure the DB connection parameters
+* Enable filling the DB with test data (see ``howto stream`` section)
+* choose the logging mode (to file or to console)
 
 ### nginx
 
@@ -131,6 +132,27 @@ Run the script in each streaming server.
     
 Make sure that the script can read the nginx access.log
 
+## Howto Stream
+
+A good starting point is to enable ``enableTestData`` in ``conf.js`` of the server. Example data will be filled in the DB. They can be used as a reference.
+
+#### Create a Person and a Server
+
+Create manually (or with external software) a person and a server in the db, table Persons and Servers
+
+#### Register a new stream
+
+Register a new stream using the proper public API, using the name of the stream and the person id as parameters
+
+#### Publish the stream
+
+Start streaming with rtmp (make sure to have nginx properly configured, see ``Configuration`` section.
+
+#### Play/Pull/Push the stream
+
+Play or pull/push the stream with rtmp or hls.
+
+
 ## Advanced Topics: server code
 
 The server uses the following libraries:
@@ -149,7 +171,7 @@ every module is implemented as express middleware.
 
 ### Authentication
 
-Authentication should be performed by ``passport.js``. At the moment, a dummy module (``FakeAuth``) is used instead, which just authenticate for a hardcoded user.
+Authentication should be performed by ``passport.js``. At the moment, a dummy module (``FakeAuth``) is used instead, which just authentication without checking for passwords/tokens
 
 ### Authorization
 
