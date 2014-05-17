@@ -12,13 +12,21 @@ var express = require('express')
   , user = require('./auth_roles/connect_roles')
   , dataCheck = require('./auth_roles/dataCheck')
   , conf = require('./conf')
+  , app = express()
+  , winstonConf = require('./winstonConf.js')(app) //log/error management (through winston)
 
-var app = express();
 
 app.set('port', process.env.PORT || 3000);
 app.use(bodyParser());
 app.use(methodOverride());
 app.use(morgan('dev'))
+
+//HTTP LOGGING
+if (winstonConf.transports.length) app.use(winstonConf.expressWinston.logger({
+      transports: winstonConf.transports,
+      meta: false, // optional: control whether you want to log the meta data about the request (default to true)
+      msg: "HTTP {{req.method}} {{req.url}} {{res.responseTime}}ms {{res.statusCode}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+}));
 
 
 //PASSPORT CONFIG
@@ -52,7 +60,8 @@ app.get('/Person/:personid/Streams/Stats/:interval',
   client.streamsStats);
 
 
-var debug = require('./debug.js')(app) //custom log and error management
+//error logging/management
+app.use(winstonConf.errorMiddleware)
 
 //INITIALIZE THE DB
 db
