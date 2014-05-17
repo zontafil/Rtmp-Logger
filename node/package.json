@@ -14,7 +14,8 @@
     "sequelize": "~1.7.5",
     "body-parser": "~1.2.0",
     "method-override": "~1.0.0",
-    "morgan": "~1.0.1"
+    "winston": "~0.7.3",
+    "express-winston": "~0.2.6"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

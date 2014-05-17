@@ -3,7 +3,6 @@ var fs        = require('fs')
   , Sequelize = require('sequelize')
   , lodash    = require('lodash')
   , conf      = require('../conf.js')
-  , debug     = require('../debug.js')()
   , winstonConf = require('../winstonConf.js')()
   , sequelize = new Sequelize(conf.db.database, conf.db.user, conf.db.password, {dialect:'postgres', logging:winstonConf.winston.verbose})
   , db        = {}
