@@ -4,7 +4,8 @@ var fs        = require('fs')
   , lodash    = require('lodash')
   , conf      = require('../conf.js')
   , debug     = require('../debug.js')()
-  , sequelize = new Sequelize(conf.db.database, conf.db.user, conf.db.password, {dialect:'postgres', logging: debug.db_log})
+  , winstonConf = require('../winstonConf.js')()
+  , sequelize = new Sequelize(conf.db.database, conf.db.user, conf.db.password, {dialect:'postgres', logging:winstonConf.winston.verbose})
   , db        = {}
  
 fs

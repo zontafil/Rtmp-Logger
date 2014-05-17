@@ -7,8 +7,13 @@ var conf = {
 		include_clients: false
 	},
 	debug: {
-		mode: 'console', // file / console / none
-		file: '/var/log/rtmp_logger.txt'
+		console:{
+			enabled: true
+		},
+		file:{
+			enabled: true,
+			filename: 'rtmp_logger.txt'
+		}
 	},
 	db:{
 		database: 'test',

@@ -2,7 +2,7 @@ var db = require('../models')
 var conf = require('../conf')
 var fs = require('fs');
 var chainer = new db.Sequelize.Utils.QueryChainer
-
+var winston = require('winston')
 
 //Create new stream
 exports.createNew = function(req,res,next){
