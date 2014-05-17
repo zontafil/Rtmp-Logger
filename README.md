@@ -77,7 +77,7 @@ Configs are located in ``node/conf.js``. In particular, it is possible to:
 * Choose a timeout for hls clients, so that they're set to idle state automatically if they have not communicated with the server for a while.
 * Configure the DB connection parameters
 * Enable filling the DB with test data (see ``howto stream`` section)
-* choose the logging mode (file/console) and levels
+* choose the error logging mode (file/console) and levels
 
 ### nginx
 
@@ -162,7 +162,7 @@ The server uses the following libraries:
     connect-roles for authorization
     sequelize.js as ORM
     postgreSQL for the db
-    winston for logging
+    winston for error logging
     
 When an API request is performed, a typical routing is the following:
 
