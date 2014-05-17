@@ -178,7 +178,6 @@ exports.onUpdate = function(req,res,next){
 	if (!!req.body.clients){
 
 		req.body.clients.forEach(function(client_data){
-			var client_data = req.body.clients[i];
 
 			chainer.add(db.Client.find({where: {ClientId: client_data.id,StreamId:req.streamserver.id}})
 			.success(function(client_item){
@@ -216,13 +215,12 @@ exports.onUpdate = function(req,res,next){
 
 
 	// CHECK FOR OLD CLIENTS TO DELETE (MAINLY FOR HLS SUPPORT)
-	for (var i = 0; i < req.streamserver.clients.length; i++) {
-		var client_item = req.streamserver.clients[i]
+	if (!!req.streamserver.clients) req.streamserver.clients.forEach(function(client_item){
 		if ((new Date() - new Date(client_item.updatedAt))>conf.client_timeout){
 			chainer.add(client_item.updateAttributes({status:'idle'})
 				.error(function(err){next(new Error(JSON.stringify(err)))}))
 		}
-	};
+	})
 
 	//WAIT FOR THE QUERY CHAIN TO END
 	chainer.run().success(function(){

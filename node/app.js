@@ -3,6 +3,7 @@ var express = require('express')
   , methodOverride = require('method-override')
   , http = require('http')
   , path = require('path')
+  , morgan  = require('morgan')
   , db = require('./models')
   , stream = require('./routes/stream')
   , client = require('./routes/client')
@@ -17,6 +18,7 @@ var app = express();
 app.set('port', process.env.PORT || 3000);
 app.use(bodyParser());
 app.use(methodOverride());
+app.use(morgan('dev'))
 
 
 //PASSPORT CONFIG
