@@ -22,8 +22,8 @@ app.use(methodOverride());
 //HTTP LOGGING
 if (winstonConf.transports.length) app.use(winstonConf.expressWinston.logger({
       transports: winstonConf.transports,
-      meta: true, // optional: control whether you want to log the meta data about the request (default to true)
-      msg: "HTTP {{req.method}} {{req.url}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
+      meta: false, // optional: control whether you want to log the meta data about the request (default to true)
+      msg: "HTTP {{req.method}} {{req.url}} {{res.responseTime}}ms {{res.statusCode}}" // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
 }));
 
 
@@ -59,8 +59,6 @@ app.get('/Person/:personid/Streams/Stats/:interval',
 
 
 //error logging/management
-if (winstonConf.transports.length)
-  app.use(winstonConf.expressWinston.errorLogger({ transports: winstonConf.transports }));
 app.use(winstonConf.errorMiddleware)
 
 //INITIALIZE THE DB

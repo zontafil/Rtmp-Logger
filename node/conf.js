@@ -8,11 +8,18 @@ var conf = {
 	},
 	debug: {
 		console:{
-			enabled: true
+			enabled: true,
+			options:{
+				colorize: true,
+				level: 'verbose' //silly,debug,verbose,info,warn,error
+			}
 		},
 		file:{
 			enabled: true,
-			filename: 'rtmp_logger.txt'
+			options:{
+				filename: 'rtmp_logger.txt',
+				level: 'verbose' //silly,debug,verbose,info,warn,error
+			}
 		}
 	},
 	db:{
