@@ -14,9 +14,9 @@ exports.createNew = function(req,res,next){
     	//STREAM SUCCESFULLY ADDED: BIND THE OWNER
     	new_stream_item.setPerson(req.person)
     	.success(function(){res.send()})
-    	.error(function(err){next(new Error(err))})
+    	.error(function(err){next(new Error(JSON.stringify(err)))})
     })
-    .error(function(err){next(new Error(err))})
+    .error(function(err){next(new Error(JSON.stringify(err)))})
 
 }
 
@@ -25,10 +25,10 @@ exports.onStart = function(req,res,next){
 
 	//UPDATE STREAM
 	chainer.add(req.streamserver.updateAttributes({status: 'active'})
-		.error(function(err){next(new Error(err))}))
+		.error(function(err){next(new Error(JSON.stringify(err)))}))
 
 	chainer.add(req.server.updateAttributes({status: 'active'})
-		.error(function(err){next(new Error(err))}))
+		.error(function(err){next(new Error(JSON.stringify(err)))}))
 
 
 	//CHECK IF THE CLIENT PLAYING/PUBLISHING IS A SERVER (->PULL/PUSH)
@@ -80,26 +80,26 @@ exports.onStart = function(req,res,next){
     			client_data.ClientId = req.query.clientid
     			client_data.StreamId = req.streamserver.id
     			chainer.add(db.Client.create(client_data)
-    				.error(function(err){next(new Error(err))}))
+    				.error(function(err){next(new Error(JSON.stringify(err)))}))
     		}
     		else{
     			chainer.add(client_item.updateAttributes(client_data)
-    				.error(function(err){next(new Error(err))}))		
+    				.error(function(err){next(new Error(JSON.stringify(err)))}))		
     		}
 
     	})
-    	.error(function(err){next(new Error(err))}))
+    	.error(function(err){next(new Error(JSON.stringify(err)))}))
 
 
 		//WAIT FOR THE QUERY CHAIN TO END
 		chainer.run().success(function(){
 			res.send()
 		})
-		.error(function(err){next(new Error(err))})
+		.error(function(err){next(new Error(JSON.stringify(err)))})
 
 
 	})
-	.error(function(err){next(new Error(err))}))
+	.error(function(err){next(new Error(JSON.stringify(err)))}))
 
 	
 }
@@ -110,9 +110,9 @@ exports.onDone = function(req,res,next){
 	//UPDATE SERVER/STREAM STATUS IF THE PUBLISH IS DONE
 	if (req.query.call=='publish_done'){
 		chainer.add(req.streamserver.updateAttributes({status: 'idle'})
-			.error(function(err){next(new Error(err))}))
+			.error(function(err){next(new Error(JSON.stringify(err)))}))
     	chainer.add(req.server.updateAttributes({status: 'inactive'})
-			.error(function(err){next(new Error(err))}))					    		
+			.error(function(err){next(new Error(JSON.stringify(err)))}))					    		
     }
 
     //UPDATE CLIENT DATA
@@ -120,16 +120,16 @@ exports.onDone = function(req,res,next){
 	.success(function(client_item){
 		if (!!client_item){ 
 			chainer.add(client_item.updateAttributes({status:'idle'})
-				.error(function(err){next(new Error(err))}))
+				.error(function(err){next(new Error(JSON.stringify(err)))}))
 		}
 	})
-	.error(function(err){next(new Error(err))}))
+	.error(function(err){next(new Error(JSON.stringify(err)))}))
 
 	//WAIT FOR THE QUERY CHAIN TO END
 	chainer.run().success(function(){
 		res.send()
 	})
-	.error(function(err){next(new Error(err))})
+	.error(function(err){next(new Error(JSON.stringify(err)))})
 
 						
 }
@@ -153,12 +153,12 @@ exports.onUpdate = function(req,res,next){
           freq : req.query.freq,
           chan : req.query.chan,
 	})
-	.error(function(err){next(new Error(err))}))
+	.error(function(err){next(new Error(JSON.stringify(err)))}))
 
 	if (req.query.idle==true) {
 		//SET THE STREAM/SERVER TO IDLE
 		chainer.add(req.streamserver.updateAttributes({status:'idle'})
-			.error(function(err){next(new Error(err))}))
+			.error(function(err){next(new Error(JSON.stringify(err)))}))
 	}
 	else{
 		//UPDATE THE STREAM/SERVER DATAS
@@ -170,7 +170,7 @@ exports.onUpdate = function(req,res,next){
               duration: req.query.duration,
               status: 'active'
         })
-		.error(function(err){next(new Error(err))}))
+		.error(function(err){next(new Error(JSON.stringify(err)))}))
 	}
 		
 
@@ -195,7 +195,7 @@ exports.onUpdate = function(req,res,next){
 						delete client_data.id
 						client_data.StreamId = req.streamserver.id
 						chainer.add(db.Client.create(client_data)
-						.error(function(err){next(new Error(err))}))
+						.error(function(err){next(new Error(JSON.stringify(err)))}))
 					}
 					else if (conf.debug) console.log('Client log is too old')
 				}
@@ -203,13 +203,13 @@ exports.onUpdate = function(req,res,next){
 					//check if the log is in the past or not
 					if (((new Date()-timestamp)<conf.client_timeout) && (timestamp>client_item.updatedAt)){
 						chainer.add(client_item.updateAttributes(client_data)
-						.error(function(err){next(new Error(err))}))
+						.error(function(err){next(new Error(JSON.stringify(err)))}))
 					}
 					else if (conf.debug) console.log('Client log is too old')
 
 				}
 			})
-			.error(function(err){next(new Error(err))}))
+			.error(function(err){next(new Error(JSON.stringify(err)))}))
 		})
 
 	}
@@ -220,7 +220,7 @@ exports.onUpdate = function(req,res,next){
 		var client_item = req.streamserver.clients[i]
 		if ((new Date() - new Date(client_item.updatedAt))>conf.client_timeout){
 			chainer.add(client_item.updateAttributes({status:'idle'})
-				.error(function(err){next(new Error(err))}))
+				.error(function(err){next(new Error(JSON.stringify(err)))}))
 		}
 	};
 
@@ -228,7 +228,7 @@ exports.onUpdate = function(req,res,next){
 	chainer.run().success(function(){
 		res.send()
 	})
-	.error(function(err){next(new Error(err))})
+	.error(function(err){next(new Error(JSON.stringify(err)))})
 
 }
 

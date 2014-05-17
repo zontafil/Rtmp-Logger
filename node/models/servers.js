@@ -2,7 +2,7 @@ module.exports = function(sequelize, DataTypes) {
   var Server = sequelize.define('Server', {
     ip: { type: DataTypes.STRING, unique: true},
     bandwidth: DataTypes.INTEGER,
-    status: DataTypes.ENUM('new', 'active', 'inactive', 'archived'),
+    status: {type: DataTypes.ENUM('new', 'active', 'inactive', 'archived'), allowNull: true},
     provider: DataTypes.STRING,
     geo: DataTypes.ARRAY(DataTypes.FLOAT),
   }, {

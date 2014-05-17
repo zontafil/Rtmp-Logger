@@ -3,8 +3,8 @@ module.exports = function(sequelize, DataTypes) {
     username: { type: DataTypes.STRING, unique: true},
     password: DataTypes.STRING,
     email: DataTypes.STRING,
-    plan: DataTypes.ENUM('plan1', 'plan2', 'plan3'),
-    rank: DataTypes.ENUM('admin', 'user', 'viewer'),
+    plan: {type: DataTypes.ENUM('plan1', 'plan2', 'plan3'), allowNull:true},
+    rank: {type: DataTypes.ENUM('admin', 'user', 'viewer'), allowNull:true},
     lastlogin: DataTypes.DATE
   }, {
     classMethods: {

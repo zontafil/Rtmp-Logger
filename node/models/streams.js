@@ -1,9 +1,9 @@
 module.exports = function(sequelize, DataTypes) {
   var Stream = sequelize.define('Stream', {
     name: { type: DataTypes.STRING, allowNull: false},
-    status: DataTypes.ENUM('idle', 'active'),
-    vcodec: DataTypes.ENUM('vp6', 'h264'),
-    acodec: DataTypes.ENUM('mp3', 'aac'),
+    status: {type: DataTypes.ENUM('idle', 'active'), allowNull: true},
+    vcodec: {type: DataTypes.ENUM('vp6', 'h264'), allowNull: true},
+    acodec: {type: DataTypes.ENUM('mp3', 'aac'), allowNull: true},
     vbit: DataTypes.INTEGER,
     sizew: DataTypes.INTEGER,
     sizeh: DataTypes.INTEGER,

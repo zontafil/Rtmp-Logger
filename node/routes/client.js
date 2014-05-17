@@ -23,7 +23,7 @@ exports.streamStats = function(req,res,next){
 			})
 		}
 	})
-	.error(function(err){next(new Error(err))})
+	.error(function(err){next(new Error(JSON.stringify(err)))})
 }
 
 
@@ -79,7 +79,7 @@ exports.streamsStats = function(req,res,next){
 
 
 			})
-			.error(function(err){next(new Error(err))})
+			.error(function(err){next(new Error(JSON.stringify(err)))})
 
 		}
 	};

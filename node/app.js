@@ -1,4 +1,6 @@
 var express = require('express')
+  , bodyParser = require('body-parser')
+  , methodOverride = require('method-override')
   , http = require('http')
   , path = require('path')
   , db = require('./models')
@@ -12,20 +14,13 @@ var express = require('express')
 
 var app = express();
 
-
-
 app.set('port', process.env.PORT || 3000);
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
+app.use(bodyParser());
+app.use(methodOverride());
 
-var debug = require('./debug.js')(app) //custom log and error management
 
 //PASSPORT CONFIG
 // require('./passport-config')
-
-
 
 //SERVER API -- PRIVATE
 app.get('/Stream/Start',dataCheck.EditStream('start'), stream.onStart) //start publish/play -- call with nginx on_*
@@ -55,6 +50,7 @@ app.get('/Person/:personid/Streams/Stats/:interval',
   client.streamsStats);
 
 
+var debug = require('./debug.js')(app) //custom log and error management
 
 //INITIALIZE THE DB
 db

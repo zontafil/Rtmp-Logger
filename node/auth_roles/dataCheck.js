@@ -28,11 +28,11 @@ exports.createNewStream = function(){
 								next()
 							}
 						})
-						.error(function(err){next(new Error(err))})
+						.error(function(err){next(new Error(JSON.stringify(err)))})
 					}
 
 				})
-				.error(function(err){next(new Error(err))})
+				.error(function(err){next(new Error(JSON.stringify(err)))})
 			}
 	
 	}
@@ -96,21 +96,21 @@ exports.EditStream = function(action){
 											next()
 										}
 									})
-									.error(function(err){next(new Error(err))})
+									.error(function(err){next(new Error(JSON.stringify(err)))})
 								}
 								else{
 									req.streamserver = ss_item
 									next()
 								}
 							})
-							.error(function(err){next(new Error(err))})
+							.error(function(err){next(new Error(JSON.stringify(err)))})
 
 						}
 					})
-					.error(function(err){next(new Error(err))})
+					.error(function(err){next(new Error(JSON.stringify(err)))})
 				}
 			})
-			.error(function(err){next(new Error(err))})
+			.error(function(err){next(new Error(JSON.stringify(err)))})
 		}
 
 	}
@@ -130,7 +130,7 @@ exports.StreamStats = function(){
 				next()
 			}
 		})
-		.error(function(err){next(new Error(err))})
+		.error(function(err){next(new Error(JSON.stringify(err)))})
 	}
 }
 
