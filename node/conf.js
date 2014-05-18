@@ -26,6 +26,10 @@ var conf = {
 		database: 'test',
 		user: 'testuser',
 		password: 'test'
+	},
+	api:{
+		onstartMethod: 'get',
+		ondoneMethod: 'get'
 	}
 }
 

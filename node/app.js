@@ -31,8 +31,8 @@ if (winstonConf.transports.length) app.use(winstonConf.expressWinston.logger({
 // require('./passport-config')
 
 //SERVER API -- PRIVATE
-app.get('/Stream/Start',dataCheck.EditStream('start'), stream.onStart) //start publish/play -- call with nginx on_*
-app.get('/Stream/Done',dataCheck.EditStream('done'),stream.onDone) //stop publish/play -- call with nginx on_*
+app[conf.api.onstartMethod]('/Stream/Start',dataCheck.EditStream('start'), stream.onStart) //start publish/play -- call with nginx on_*
+app[conf.api.ondoneMethod]('/Stream/Done',dataCheck.EditStream('done'),stream.onDone) //stop publish/play -- call with nginx on_*
 app.get('/Stream/Update',dataCheck.EditStream('update'),stream.onUpdate) //update stream -- call with stream_logger_rtmp or hls
 
 
