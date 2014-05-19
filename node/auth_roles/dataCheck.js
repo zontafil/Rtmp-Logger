@@ -43,7 +43,9 @@ exports.EditStream = function(action){
 	return function(req,res,next){
 
 		//choose where to get the input data (from headers or from body)
-		if (conf.api.dataContainer=='body') req.query = req.body
+		if ((action=='start') || (action=='done')){
+			if (conf.api.dataContainer=='body') req.query = req.body
+		}
 
 
 		//CHECK THE CONSISTENCY OF INPUT DATAS
