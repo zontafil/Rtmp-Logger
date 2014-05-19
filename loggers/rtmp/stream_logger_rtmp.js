@@ -4,7 +4,7 @@ var http = require('http')
 , template = require('url-template')
 
 //list of apps/streams to log / set to [] to fetch all
-var app_list = ['myapp']
+var app_list = []
 var stream_list = []
 
 //logger config
