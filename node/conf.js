@@ -28,8 +28,9 @@ var conf = {
 		password: 'test'
 	},
 	api:{
-		onstartMethod: 'get',
-		ondoneMethod: 'get'
+		onstartMethod: 'post', //{get,post}
+		ondoneMethod: 'post',	//{get,post}
+		dataContainer: 'body'	//{query,body}
 	}
 }
 

@@ -42,17 +42,22 @@ exports.createNewStream = function(){
 exports.EditStream = function(action){
 	return function(req,res,next){
 
+		//choose where to get the input data (from headers or from body)
+		var dataContainer = null
+		if (!conf.api.dataContainer) dataContainer = req.query
+		else dataContainer = req[conf.api.dataContainer]
+
 		//CHECK THE CONSISTENCY OF INPUT DATAS
 		var params_ok = false
-		if (!req.query.name) next(new Error('Stream Name missing'))
+		if (!dataContainer.name) next(new Error('Stream Name missing'))
 		else if (action=='start'){
-			if ((req.query.call!='play') && (req.query.call!='publish')) next(new Error('Wrong action'))
-			else if (!req.query.clientid) next(new Error('nginxclientid missing!'))
+			if ((dataContainer.call!='play') && (dataContainer.call!='publish')) next(new Error('Wrong action'))
+			else if (!dataContainer.clientid) next(new Error('nginxclientid missing!'))
 			else params_ok = true
 		}
 		else if (action=='done'){
-			if ((req.query.call!='publish_done') && (req.query.call!='play_done')) manage_error(res,'OnDone: Wrong action')
-			else if (!req.query.clientid) manage_error(res,'OnDone: nginxclientid missing!')
+			if ((dataContainer.call!='publish_done') && (dataContainer.call!='play_done')) manage_error(res,'OnDone: Wrong action')
+			else if (!dataContainer.clientid) manage_error(res,'OnDone: nginxclientid missing!')
 			else params_ok = true
 		}
 		else if (action=='update') params_ok = true
@@ -61,7 +66,7 @@ exports.EditStream = function(action){
 		if (params_ok){
 			//CHECK IF THE DB IS DB (STREAM/SERVER) IS CONSISTENT
 			var remoteAddress = req.connection.remoteAddress
-			var streamname = req.query.name
+			var streamname = dataContainer.name
 
 			//CHECK SERVER
 			db.Server.find({where:{ip:remoteAddress}})
