@@ -47,7 +47,7 @@ exports.onStart = function(req,res,next){
 
 
     	//BUILD CLIENTID AND ADD CLIENT TO THE DB
-    	chainer.add(db.Client.find({ClientId: req.query.clientid,StreamId:req.streamserver.id})
+    	chainer.add(db.Client.find({where:{ClientId: req.query.clientid,StreamId:req.streamserver.id}})
     	.success(function(client_item){
     		//compute flash version and OS
     		var flash='',os=''
