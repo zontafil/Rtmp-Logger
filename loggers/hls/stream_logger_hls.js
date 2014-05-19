@@ -16,6 +16,7 @@ var stream_list = []
 
 //logger url
 var logger_url = '/Stream/Update'
+var logger_port = 3000
 
 //in this file we put the timestamp of the last log analysis
 var timestamp_file = '/tmp/hls_log_timestamp.txt'
@@ -145,7 +146,7 @@ fs.readFile(timestamp_file,'utf8',function(err,data){
 
         var params = {
           path : logger_url+'?dataout='+streams[i].dataout+'&name='+streams[i].name+'&timestamp='+streams[i].timestamp,
-          port: 3000,
+          port: logger_port,
           headers: headers
         }
 

@@ -6,10 +6,13 @@ var http = require('http')
 //list of apps/streams to log / set to [] to fetch all
 var app_list = ['myapp']
 var stream_list = []
+
+//logger config
 var logger_url = '/Stream/Update'
+var logger_port = 3000
 
 //url of the streaming servers
-var stream_servers = ['http://localhost/stat']
+var stream_servers = ['http://localhost:2080/stat']
 
 //include clients data, mainly for av/drop/duration infos
 var include_clients = true
@@ -28,7 +31,6 @@ for (var l = 0; l < stream_servers.length; l++) {
         //xml ---> js object
 
         xml2js.parseString(xml,function(err,item){
-
 
           //ANALYZE STREAMS
           for (var i = 0; i < item.rtmp.server[0].application.length; i++) {
@@ -63,8 +65,8 @@ for (var l = 0; l < stream_servers.length; l++) {
                       duration : stream.time[0],
                       name : stream.name[0],
 
-                      url : '/Stream/Update?vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
-                      port: 3000 
+                      url : logger_url+'?vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
+                      port: logger_port
                     }
 
 
@@ -114,7 +116,7 @@ for (var l = 0; l < stream_servers.length; l++) {
           for (var i = 0; i < stream_list.length; i++) {
             var params = {
               path: logger_url+'?idle=true&name='+stream_list[i],
-              port: 3000
+              port: logger_port
             }
             var request = http.request(params)
             request.on('error', function(err){console.log("HTTP error: "+err)})
