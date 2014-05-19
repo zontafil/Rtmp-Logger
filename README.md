@@ -78,6 +78,7 @@ Configs are located in ``node/conf.js``. In particular, it is possible to:
 * Configure the DB connection parameters
 * Enable filling the DB with test data (see ``howto stream`` section)
 * choose the error logging mode (file/console) and levels
+* choose start/stop API format (post/get, input data in headers/body)
 
 ### nginx
 
