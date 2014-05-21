@@ -21,6 +21,7 @@ for (var l = 0; l < stream_servers.length; l++) {
     var stream_server = stream_servers[l]
 
     var req = http.get(stream_server, function(res) {
+      var streamip = res.req.connection.remoteAddress
       // save the data
       var xml = '';
       res.on('data', function(chunk) {
@@ -31,16 +32,19 @@ for (var l = 0; l < stream_servers.length; l++) {
         //xml ---> js object
 
         xml2js.parseString(xml,function(err,item){
-
           //ANALYZE STREAMS
-          for (var i = 0; i < item.rtmp.server[0].application.length; i++) {
+          if (!!err) {
+            console.log('Error fetching the log: check your connection: ')
+            console.log(err)
+          }
+          else if (!!item.rtmp) for (var i = 0; i < item.rtmp.server[0].application.length; i++) {
             var app = item.rtmp.server[0].application[i]
             var app_pos = app_list.indexOf(app.name[0])
 
             if ((app_pos!=-1) || (!app_list.length)) {
               //we have a good app, loop through its streams
 
-              if (app.live[0].stream!=undefined) for (var i = 0; i < app.live[0].stream.length; i++) {
+              if ((!!app.live) && (app.live[0].stream!=undefined)) for (var i = 0; i < app.live[0].stream.length; i++) {
                 var stream = app.live[0].stream[i]
 
                 var stream_pos = stream_list.indexOf(stream.name[0])
@@ -64,8 +68,9 @@ for (var l = 0; l < stream_servers.length; l++) {
                       nclients : stream.nclients[0],
                       duration : stream.time[0],
                       name : stream.name[0],
+                      ip: streamip,
 
-                      url : logger_url+'?vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
+                      url : logger_url+'?ip={ip}&vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
                       port: logger_port
                     }
 
@@ -128,8 +133,10 @@ for (var l = 0; l < stream_servers.length; l++) {
       });
 
     });
+
+    req.on('error', function(err) {
+      console.log('Error fetching nginx stats: '+err)
+    });
+
 }
 
-req.on('error', function(err) {
-  console.log('Error fetching nginx stats: '+err)
-});

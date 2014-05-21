@@ -66,7 +66,7 @@ exports.EditStream = function(action){
 
 		if (params_ok){
 			//CHECK IF THE DB IS DB (STREAM/SERVER) IS CONSISTENT
-			var remoteAddress = req.connection.remoteAddress
+			var remoteAddress = req.query.ip || req.connection.remoteAddress
 			var streamname = req.query.name
 
 			//CHECK SERVER
@@ -139,10 +139,3 @@ exports.StreamStats = function(){
 		.error(function(err){next(new Error(JSON.stringify(err)))})
 	}
 }
-
-
-// if (fs.existsSync('FAKE')) {
-// 			console.log('WARNING: USING FAKE SERVER IP')
-
-// 			remoteAddress = '192.168.10.6'
-// 		}
