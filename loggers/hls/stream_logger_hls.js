@@ -152,7 +152,7 @@ fs.readFile(timestamp_file,'utf8',function(err,data){
           headers: headers
         }
         params.host = logger_server.host
-        params.path = logger_server.url+params.url
+        params.path = logger_server.url+params.path
         params.port = logger_server.port
 
         var request = http.request(params)
