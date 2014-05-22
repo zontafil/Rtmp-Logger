@@ -8,19 +8,31 @@ var app_list = []
 var stream_list = []
 
 //logger config
-var logger_url = '/Stream/Update'
-var logger_port = 3000
+var logger_server = {
+  host: '94.23.55.74',
+  port: 3000,
+  url: '/Stream/Update'
+}
 
 //url of the streaming servers
-var stream_servers = ['http://localhost:2080/stat']
+// var stream_servers = ['http://localhost:2080/stat']
+var stream_servers = [{
+  host: '94.23.55.74',
+  port: 2080,
+  path: '/stat',
+  method: 'GET'}]
 
 //include clients data, mainly for av/drop/duration infos
 var include_clients = true
 
+
+
+//BEGIN OF CODE
 for (var l = 0; l < stream_servers.length; l++) {
     var stream_server = stream_servers[l]
 
-    var req = http.get(stream_server, function(res) {
+    var req = http.request(stream_server, function(res) {
+
       var streamip = res.req.connection.remoteAddress
       // save the data
       var xml = '';
@@ -70,9 +82,11 @@ for (var l = 0; l < stream_servers.length; l++) {
                       name : stream.name[0],
                       ip: streamip,
 
-                      url : logger_url+'?ip={ip}&vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
-                      port: logger_port
+                      url : '?ip={ip}&vcodec={vcodec}&vbit={vbit}&sizew={sizew}&sizeh={sizeh}&fps={fps}&acodec={acodec}&abit={abit}&freq={freq}&chan={chan}&datain={datain}&dataout={dataout}&bandin={bandin}&bandout={bandout}&nclients={nclients}&name={name}&duration={duration}',
                     }
+                    params.host = logger_server.host
+                    params.url = logger_server.url+params.url
+                    params.port = logger_server.port
 
 
                     //INCLUDE CLIENTS DATA IF NEEDED
@@ -124,7 +138,7 @@ for (var l = 0; l < stream_servers.length; l++) {
               port: logger_port
             }
             var request = http.request(params)
-            request.on('error', function(err){console.log("HTTP error: "+err)})
+            request.on('error', function(err){console.log("Error sending to Logger: "+err)})
             request.end()
           };
 
@@ -133,6 +147,8 @@ for (var l = 0; l < stream_servers.length; l++) {
       });
 
     });
+
+    req.end()
 
     req.on('error', function(err) {
       console.log('Error fetching nginx stats: '+err)

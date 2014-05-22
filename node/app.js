@@ -87,6 +87,13 @@ db
           provider: 'provider1',
           geo: [0.04,0.2]
         })
+        db.Server.findOrCreate({
+          id: 15,
+          ip: '94.23.55.74',
+          status: 'new',
+          provider: 'provider1',
+          geo: [0.04,0.2]
+        })
         db.Person.findOrCreate({
           username: 'topolino',
           password: '123456',
