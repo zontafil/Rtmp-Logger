@@ -14,8 +14,8 @@ var logger_server = {
   url: '/Stream/Update'
 }
 
-//url of the streaming servers
-// var stream_servers = ['http://localhost:2080/stat']
+//url of the streaming servers --- PLEASE USE LOCALHOST ONLY IF STREAMER AND SERVER ARE IN THE SAME MACHINE!
+// ---- USE WAN/LAN IP IN THE OTHER CASES
 var stream_servers = [{
   host: '94.23.55.74',
   port: 2080,

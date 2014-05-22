@@ -15,8 +15,11 @@ var http = require('http')
 var stream_list = []
 
 //logger url
-var logger_url = '/Stream/Update'
-var logger_port = 3000
+var logger_server = {
+  host: '94.23.55.74',
+  port: 3000,
+  url: '/Stream/Update'
+}
 
 //in this file we put the timestamp of the last log analysis
 var timestamp_file = '/tmp/hls_log_timestamp.txt'
@@ -145,10 +148,12 @@ fs.readFile(timestamp_file,'utf8',function(err,data){
         };
 
         var params = {
-          path : logger_url+'?dataout='+streams[i].dataout+'&name='+streams[i].name+'&timestamp='+streams[i].timestamp,
-          port: logger_port,
+          path : '?dataout='+streams[i].dataout+'&name='+streams[i].name+'&timestamp='+streams[i].timestamp,
           headers: headers
         }
+        params.host = logger_server.host
+        params.url = logger_server.url+params.url
+        params.port = logger_server.port
 
         var request = http.request(params)
         request.on('error', function(err){console.log("HTTP error: "+err)})
